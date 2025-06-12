@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>ExpenseTracker</title>
+    <link rel="stylesheet" href="/css/home.css" />
+</head>
+
+<body>
+
+<!-- Include Header (Navbar) -->
+<div th:replace="fragments/header.html"></div>
+
+<section class="features" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem; padding:2rem;">
+    <div class="feature" style="flex:1 1 250px; max-width:300px; text-align:center;">
+        <img src="./img/track.jpg" alt="Transactions" style="width:100%; border-radius:8px;" />
+        <h2>Track Transactions</h2>
+        <p>Monitor every penny with detailed breakdowns.</p>
+    </div>
+
+    <div class="feature" style="flex:1 1 250px; max-width:300px; text-align:center;">
+        <img src="./img/reports.jpg" alt="Reports" style="width:100%; border-radius:8px;" />
+        <h2>Insightful Reports</h2>
+        <p>Visualize your spending trends with interactive charts.</p>
+    </div>
+
+    <div class="feature" style="flex:1 1 250px; max-width:300px; text-align:center;">
+        <img src="./img/security.jpg" alt="Security" style="width:100%; border-radius:8px;" />
+        <h2>Secure &amp; Private</h2>
+        <p>Your data is encrypted and protected at all times.</p>
+    </div>
+</section>
+
+<!-- Include Footer -->
+<div th:replace="fragments/footer.html"></div>
+
+</body>
+</html>

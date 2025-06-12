@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/floatingbutton.css}">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<div th:replace="fragments/header.html"></div>
+
+<!-- Dashboard Content -->
+<div class="dashboard-container">
+    <h2 class="dashboard-title">
+        Welcome, <span th:text="${loggedInUser.userName}">User</span>
+    </h2>
+
+    <!-- Stats Section -->
+    <div class="stats">
+        <div class="stat-box"><strong>Total Expenses:</strong> <span th:text="${totalExpense}">0</span></div>
+        <div class="stat-box"><strong>Remaining Balance:</strong> <span th:text="${remainingBalance}">0</span></div>
+        <div class="stat-box"><strong>Monthly Income:</strong> <span th:text="${monthlyIncome}">0</span></div>
+    </div>
+
+    <!-- Chart Toggle -->
+    <div class="button-group">
+        <button class="btn" onclick="showChart('overview')">Overview</button>
+        <button class="btn" onclick="showChart('category')">By Category</button>
+    </div>
+
+    <!-- Chart Containers -->
+    <div id="overviewChartContainer" class="chart-container">
+        <h3>Overview</h3>
+        <canvas id="overviewChart"></canvas>
+    </div>
+
+    <div id="categoryChartContainer" class="chart-container" style="display: none;">
+        <h3>Expenses by Category</h3>
+        <canvas id="expenseChart"></canvas>
+    </div>
+</div>
+
+<!-- JS Data from Thymeleaf -->
+<script th:inline="javascript">
+    const categoryLabels = /*[[${categoryLabels}]]*/ [];
+    const categoryData = /*[[${categoryValues}]]*/ [];
+    const monthlyIncome = [[${monthlyIncome}]];
+    const totalExpense = [[${totalExpense}]];
+    const remainingBalance = [[${remainingBalance}]];
+</script>
+
+<!-- Chart.js Config -->
+<script>
+    function showChart(type) {
+        document.getElementById('overviewChartContainer').style.display = (type === 'overview') ? 'block' : 'none';
+        document.getElementById('categoryChartContainer').style.display = (type === 'category') ? 'block' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const overviewCtx = document.getElementById('overviewChart')?.getContext('2d');
+        if (overviewCtx) {
+            new Chart(overviewCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Monthly Income', 'Total Expenses', 'Remaining Balance'],
+                    datasets: [{
+                        label: 'Financial Overview',
+                        data: [monthlyIncome, totalExpense, remainingBalance],
+                        backgroundColor: ['#4bc0c0', '#ff6384', '#ffce56'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+
+        const categoryCtx = document.getElementById('expenseChart')?.getContext('2d');
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        label: 'Expenses by Category',
+                        data: categoryData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Floating Quick Add Button -->
+<button type="button" class="btn btn-primary fab" data-bs-toggle="modal" data-bs-target="#quickAddModal" title="Quick Add Expense">
+    <span style="font-size: 1.5rem;">&#43;</span>
+</button>
+
+<!-- Quick Add Expense Modal -->
+<div class="modal fade" id="quickAddModal" tabindex="-1" aria-labelledby="quickAddModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form th:action="@{/quick-add-expense}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quick Add Expense</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0.01" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="" disabled selected>Choose...</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Bills">Bills</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Health">Health</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title (optional)</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div th:replace="fragments/footer.html"></div>
+
+</body>
+</html>

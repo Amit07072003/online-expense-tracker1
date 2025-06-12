@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <title>Page Title</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/navbars/navbar-1/assets/css/navbar-1.css" />
+</head>
+
+<body>
+<!-- Navbar 1 - Bootstrap Brain Component -->
+<nav class="navbar navbar-expand-md bg-light bsb-navbar bsb-navbar-hover bsb-navbar-caret sticky-top">
+
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="./img/logo.png" alt="Logo" width="60" height="auto" />
+        </a>
+        <button
+                class="navbar-toggler border-0"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar"
+        >
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    fill="currentColor"
+                    class="bi bi-list"
+                    viewBox="0 0 16 16"
+            >
+                <path
+                        fill-rule="evenodd"
+                        d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"
+                />
+            </svg>
+        </button>
+
+        <div
+                class="offcanvas offcanvas-end"
+                tabindex="-1"
+                id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel"
+        >
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Close"
+                ></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    </li>
+
+                    <!-- Show Dashboard if user is logged in -->
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+
+                    <!-- Show Manage Expenses dropdown only when user is logged in -->
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                id="expenseDropdown"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                        >
+                            Manage Expenses
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow bsb-zoomIn" aria-labelledby="expenseDropdown">
+                            <li><a class="dropdown-item" href="/add-expense">Add Expense</a></li>
+                            <li>
+                                <a class="dropdown-item" href="/view-expenses"
+                                >View / Update Expenses / Delete Expense</a
+                                >
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Show login/signup when NOT logged in -->
+                    <li class="nav-item dropdown" sec:authorize="!isAuthenticated()">
+                        <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                id="accountDropdown"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                        >
+                            Account
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow bsb-zoomIn" aria-labelledby="accountDropdown">
+                            <li><a class="dropdown-item" href="/login">Log in</a></li>
+                            <li><a class="dropdown-item" href="/forgot-password">Lost Password?</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="/register">Sign up</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Logout for authenticated users -->
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link text-danger" href="/logout">Logout</a>
+                    </li>
+
+                    <!-- Show logged-in user's email -->
+                    <li class="nav-item d-flex align-items-center" sec:authorize="isAuthenticated()">
+                        <span class="nav-link disabled text-primary" sec:authentication="name"></span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script src="https://unpkg.com/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

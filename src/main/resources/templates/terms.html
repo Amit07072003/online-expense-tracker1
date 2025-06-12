@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions | Expense Tracker</title>
+    <link rel="stylesheet" th:href="@{/css/terms.css}">
+</head>
+<body>
+
+<!-- Optional Header -->
+<div th:replace="fragments/header.html"></div>
+
+<div class="container">
+    <h1>Terms and Conditions</h1>
+    <p class="date">Effective Date: <strong>June 1, 2025</strong></p>
+
+    <section>
+        <h2>1. Use of the Service</h2>
+        <p>
+            Expense Tracker is provided solely to help users manage and track personal expenses.
+            You agree not to use the service for illegal activities or to track expenses on behalf of others without their consent.
+        </p>
+    </section>
+
+    <section>
+        <h2>2. Account Registration</h2>
+        <p>
+            You must provide accurate and complete information during registration and maintain confidentiality of your credentials.
+            Notify us immediately of unauthorized account usage.
+        </p>
+    </section>
+
+    <section>
+        <h2>3. User Data and Privacy</h2>
+        <p>
+            Your financial data is not sold or shared with third parties. All data is stored securely for providing service features only.
+        </p>
+    </section>
+
+    <section>
+        <h2>4. Data Accuracy</h2>
+        <p>
+            While we help track your finances, you are responsible for the accuracy of the data entered. We are not liable for inaccuracies.
+        </p>
+    </section>
+
+    <section>
+        <h2>5. Service Availability</h2>
+        <p>
+            We aim for 24/7 uptime but do not guarantee it. Access may be limited for maintenance or security.
+        </p>
+    </section>
+
+    <section>
+        <h2>6. Termination of Account</h2>
+        <p>
+            You may delete your account anytime. We may suspend accounts violating Terms or impacting system integrity.
+        </p>
+    </section>
+
+    <section>
+        <h2>7. Limitation of Liability</h2>
+        <p>
+            Expense Tracker is provided "as is". We are not liable for financial losses or miscalculations.
+        </p>
+    </section>
+
+    <section>
+        <h2>8. Changes to Terms</h2>
+        <p>
+            Terms may change from time to time. Continued use means you accept those changes.
+        </p>
+    </section>
+
+    <section>
+        <h2>9. Governing Law</h2>
+        <p>
+            These Terms are governed by the laws of your applicable jurisdiction.
+        </p>
+    </section>
+
+    <section>
+        <h2>10. Contact Us</h2>
+        <p>
+            Questions? Email us at <a href="mailto:Amikushwaha0707@gmail.com">Amikushwaha0707@gmail.com</a>.
+        </p>
+    </section>
+
+    <div class="back-button-container">
+        <button onclick="history.back()">← Back</button>
+    </div>
+</div>
+
+<!-- Optional Footer -->
+<div th:replace="fragments/footer.html"></div>
+
+</body>
+</html>
