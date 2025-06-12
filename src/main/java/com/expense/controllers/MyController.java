@@ -77,15 +77,15 @@ public class MyController {
 public String register(@ModelAttribute("user") User user, Model model) {
     try {
         if (userService.findByEmail(user.getEmail()) != null) {
-              System.out.println("debugggggg1");
+            
             model.addAttribute("error", "Email already registered");
             return "register";
         }
         userService.register(user);
-          System.out.println("debugggggg2");
+       
         return "redirect:/login";
     } catch (Exception e) {
-          System.out.println("debugggggg3");
+        
         model.addAttribute("error", "Error during registration: " + e.getMessage());
         e.printStackTrace();
         return "register";
