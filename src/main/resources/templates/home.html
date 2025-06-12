@@ -12,7 +12,7 @@
 <body>
 
 <!-- Include Header (Navbar) -->
-<div th:replace="fragments/header.html"></div>
+<div th:insert="~{fragments/header.html}"></div>
 
 <section class="features" style="display:flex; flex-wrap:wrap; justify-content:center; gap:2rem; padding:2rem;">
     <div class="feature" style="flex:1 1 250px; max-width:300px; text-align:center;">
@@ -35,7 +35,7 @@
 </section>
 
 <!-- Include Footer -->
-<div th:replace="fragments/footer.html"></div>
+<div th:insert="~{fragments/footer.html}"></div>
 
 </body>
 </html>
