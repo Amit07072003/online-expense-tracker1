@@ -1,9 +1,11 @@
 package com.expense.controllers;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,11 +21,12 @@ import com.expense.repository.UserRepository;
 import com.expense.service.EmailService;
 import com.expense.service.ExpenseService;
 import com.expense.service.UserService;
-import java.time.LocalDate;
-
 
 @Controller
 public class MyController {
+
+    @Value("${app.base-url}")
+    private String appBaseUrl;
 
     @Autowired
     private PasswordResetTokenRepository tokenRepo;
@@ -39,21 +42,17 @@ public class MyController {
 
     @Autowired
     private ExpenseService expenseService;
+
     @Autowired
     private EmailService emailService;
 
-    // Home
     @GetMapping("/")
     public String homePage() {
         return "home";
     }
 
-    //about
-
-
     @GetMapping("/about")
     public String aboutPage() {
-        // Returns the Thymeleaf template named "about.html"
         return "about";
     }
 
@@ -73,26 +72,22 @@ public class MyController {
         return "register";
     }
 
- @PostMapping("/register")
-public String register(@ModelAttribute("user") User user, Model model) {
-    try {
-        if (userService.findByEmail(user.getEmail()) != null) {
-            
-            model.addAttribute("error", "Email already registered");
+    @PostMapping("/register")
+    public String register(@ModelAttribute("user") User user, Model model) {
+        try {
+            if (userService.findByEmail(user.getEmail()) != null) {
+                model.addAttribute("error", "Email already registered");
+                return "register";
+            }
+            userService.register(user);
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error during registration: " + e.getMessage());
+            e.printStackTrace();
             return "register";
         }
-        userService.register(user);
-       
-        return "redirect:/login";
-    } catch (Exception e) {
-        
-        model.addAttribute("error", "Error during registration: " + e.getMessage());
-        e.printStackTrace();
-        return "register";
     }
-}
 
-    // Dashboard
     @GetMapping("/dashboard")
     public String showDashboard(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) return "redirect:/login";
@@ -120,12 +115,11 @@ public String register(@ModelAttribute("user") User user, Model model) {
         if (userDetails == null) return "redirect:/login";
 
         Expense expense = new Expense();
-        expense.setAmount(null); // Ensure no default value appears in the input field
+        expense.setAmount(null);
 
         model.addAttribute("expense", expense);
         return "add-expense";
     }
-
 
     @PostMapping("/save-expense")
     public String saveExpense(@ModelAttribute Expense expense, @AuthenticationPrincipal UserDetails userDetails) {
@@ -176,41 +170,36 @@ public String register(@ModelAttribute("user") User user, Model model) {
         return "redirect:/view-expenses";
     }
 
-    // ========================
-    // Password Reset Section
-    // ========================
-
     @GetMapping("/forgot-password")
     public String showForgotPasswordPage() {
         return "forgot-password";
     }
 
-@PostMapping("/forgot-password")
-public String processForgotPassword(@RequestParam("email") String email, Model model) {
-    User user = userRepository.findByEmail(email);
-    if (user == null) {
-        model.addAttribute("error", "No user found with that email.");
+    @PostMapping("/forgot-password")
+    public String processForgotPassword(@RequestParam("email") String email, Model model) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            model.addAttribute("error", "No user found with that email.");
+            return "forgot-password";
+        }
+
+        String token = UUID.randomUUID().toString();
+        LocalDateTime expiry = LocalDateTime.now().plusHours(1);
+
+        Optional<PasswordResetToken> existingTokenOpt = tokenRepo.findByUser(user);
+        PasswordResetToken resetToken = existingTokenOpt.orElse(new PasswordResetToken());
+        resetToken.setToken(token);
+        resetToken.setUser(user);
+        resetToken.setExpiryDate(expiry);
+        tokenRepo.save(resetToken);
+
+        String resetLink = appBaseUrl + "/resetpassword?token=" + token;
+        System.out.println("Password reset link: " + resetLink);
+        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+
+        model.addAttribute("message", "Password reset link sent to your email.");
         return "forgot-password";
     }
-
-    String token = UUID.randomUUID().toString();
-    LocalDateTime expiry = LocalDateTime.now().plusHours(1);
-
-    Optional<PasswordResetToken> existingTokenOpt = tokenRepo.findByUser(user);
-
-    PasswordResetToken resetToken = existingTokenOpt.orElse(new PasswordResetToken());
-    resetToken.setToken(token);
-    resetToken.setUser(user);
-    resetToken.setExpiryDate(expiry);
-    tokenRepo.save(resetToken);
-
-    String resetLink = appBaseUrl + "/resetpassword?token=" + token;
-    System.out.println("Password reset link: " + resetLink);
-    emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-
-    model.addAttribute("message", "Password reset link sent to your email.");
-    return "forgot-password";
-}
 
     @GetMapping("/resetpassword")
     public String showResetForm(@RequestParam("token") String token, Model model) {
@@ -238,14 +227,12 @@ public String processForgotPassword(@RequestParam("email") String email, Model m
         User user = resetToken.getUser();
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        tokenRepo.delete(resetToken); // optional: delete token after use
+        tokenRepo.delete(resetToken);
 
         model.addAttribute("message", "Password reset successful!");
         return "login";
     }
 
-
-    //quick add button
     @PostMapping("/quick-add-expense")
     public String quickAddExpense(
             @RequestParam Double amount,
@@ -260,12 +247,9 @@ public String processForgotPassword(@RequestParam("email") String email, Model m
         expense.setCategory(category);
         expense.setTitle(title != null ? title.trim() : "Untitled");
         expense.setDate(LocalDate.now());
-        expense.setUser(userService.findByEmail(userDetails.getUsername())); // Or however you set user
+        expense.setUser(userService.findByEmail(userDetails.getUsername()));
 
         expenseService.saveExpense(expense);
-
-        return "redirect:/dashboard"; // or wherever you want to go after quick add
+        return "redirect:/dashboard";
     }
-
-
 }
