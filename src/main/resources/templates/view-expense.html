@@ -13,7 +13,7 @@
 <body>
 
 <!-- Header Fragment -->
-<div th:replace="fragments/header.html"></div>
+<div th:insert="~{fragments/header.html}"></div>
 
 <div class="container">
     <h2>Your Expenses</h2>
@@ -37,7 +37,7 @@
 </div>
 
 <!-- Footer Fragment -->
-<div th:replace="fragments/footer.html"></div>
+<div th:insert="~{fragments/footer.html}"></div>
 <!-- Floating Action Button -->
 <button type="button" class="btn btn-primary fab" data-bs-toggle="modal" data-bs-target="#quickAddModal">
     <span style="font-size: 1.5rem;">&#43;</span>
