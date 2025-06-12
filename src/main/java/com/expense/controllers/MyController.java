@@ -185,31 +185,32 @@ public String register(@ModelAttribute("user") User user, Model model) {
         return "forgot-password";
     }
 
-    @PostMapping("/forgot-password")
-    public String processForgotPassword(@RequestParam("email") String email, Model model) {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            model.addAttribute("error", "No user found with that email.");
-            return "forgot-password";
-        }
-
-        String token = UUID.randomUUID().toString();
-        LocalDateTime expiry = LocalDateTime.now().plusHours(1);
-
-        Optional<PasswordResetToken> existingTokenOpt = tokenRepo.findByUser(user);
-
-        PasswordResetToken resetToken = existingTokenOpt.orElse(new PasswordResetToken());
-        resetToken.setToken(token);
-        resetToken.setUser(user);
-        resetToken.setExpiryDate(expiry);
-        tokenRepo.save(resetToken);
-
-        String resetLink = "http://localhost:8080/resetpassword?token=" + token;
-        System.out.println("Password reset link: " + resetLink); // TODO: replace with email logic
-        emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
-        model.addAttribute("message", "Password reset link sent to your email.");
+@PostMapping("/forgot-password")
+public String processForgotPassword(@RequestParam("email") String email, Model model) {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        model.addAttribute("error", "No user found with that email.");
         return "forgot-password";
     }
+
+    String token = UUID.randomUUID().toString();
+    LocalDateTime expiry = LocalDateTime.now().plusHours(1);
+
+    Optional<PasswordResetToken> existingTokenOpt = tokenRepo.findByUser(user);
+
+    PasswordResetToken resetToken = existingTokenOpt.orElse(new PasswordResetToken());
+    resetToken.setToken(token);
+    resetToken.setUser(user);
+    resetToken.setExpiryDate(expiry);
+    tokenRepo.save(resetToken);
+
+    String resetLink = appBaseUrl + "/resetpassword?token=" + token;
+    System.out.println("Password reset link: " + resetLink);
+    emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
+
+    model.addAttribute("message", "Password reset link sent to your email.");
+    return "forgot-password";
+}
 
     @GetMapping("/resetpassword")
     public String showResetForm(@RequestParam("token") String token, Model model) {
