@@ -73,15 +73,21 @@ public class MyController {
         return "register";
     }
 
-    @PostMapping("/register")
-    public String register(@ModelAttribute("user") User user, Model model) {
+ @PostMapping("/register")
+public String register(@ModelAttribute("user") User user, Model model) {
+    try {
         if (userService.findByEmail(user.getEmail()) != null) {
             model.addAttribute("error", "Email already registered");
             return "register";
         }
         userService.register(user);
         return "redirect:/login";
+    } catch (Exception e) {
+        model.addAttribute("error", "Error during registration: " + e.getMessage());
+        e.printStackTrace();
+        return "register";
     }
+}
 
     // Dashboard
     @GetMapping("/dashboard")
