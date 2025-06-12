@@ -16,7 +16,7 @@
 <body>
 
 <!-- Header -->
-<div th:replace="fragments/header.html"></div>
+<div th:insert="~{fragments/header.html}"></div>
 
 <!-- Dashboard Content -->
 <div class="dashboard-container">
@@ -161,7 +161,7 @@
 </div>
 
 <!-- Footer -->
-<div th:replace="fragments/footer.html"></div>
+<div th:insert="~{fragments/footer.html}"></div>
 
 </body>
 </html>
