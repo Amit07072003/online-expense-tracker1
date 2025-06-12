@@ -12,7 +12,9 @@
 <body>
 
 <!-- Header Fragment -->
-<div th:replace="fragments/header.html"></div>
+<div th:insert="~{fragments/header.html}"></div>
+    
+
 
 <div class="form-container">
     <div class="card-sh">
@@ -81,7 +83,7 @@
 </div>
 
 <!-- Footer Fragment -->
-<div th:replace="fragments/footer.html"></div>
+<div th:insert="~{fragments/footer.html}"></div>
 
 <script>
     function clearForm() {
